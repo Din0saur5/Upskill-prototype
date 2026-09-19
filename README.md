@@ -2,6 +2,51 @@
 
 An interactive React Native / Expo UI concept for presenting a new adventure screen. Existing lesson content, battles, matchmaking, and accounts remain outside this prototype. Entry panels use **Finish lesson** / **Finish battle** to demonstrate the visible progression.
 
+## Product strategy
+
+**Make learning feel like an adventure you inhabit.** Upskill Hero already has lessons and battles. This project explores a different way to reach them: a small fantasy world where progress changes the places around you.
+
+The intended audience is learners using the existing iPhone app, and the immediate audience for this repository is the team evaluating that direction. This is a presentation prototype, not a replacement for the existing lesson, battle, or account systems.
+
+### The problem we are exploring
+
+The current adventure screen communicates progress clearly, but its chain of circular lesson nodes feels too close to Duolingo. The opportunity is to give Upskill Hero a more distinctive identity through its knight, companion, Orin, and fantasy settings while keeping the next learning step understandable.
+
+Our hypothesis is that movement, optional discoveries, and visible changes to the world can make a linear curriculum feel more personal and less like a checklist. That is a design hypothesis to test with learners, not an established retention or learning-outcome claim.
+
+### The approach
+
+- **Keep the curriculum guided; give exploration room.** Nine lessons remain sequential within each module. The player can wander sideways, investigate scenery, and take small detours. A next-objective prompt and optional follow-the-trail action keep navigation approachable.
+- **Turn destinations into invitations.** A lesson is a place in the world. It lights up when the player is close and ready to enter. Finishing it leaves a visible mark and makes the next place available.
+- **Make progress change the environment.** Orin’s wagon opens after lesson four. Finishing the module opens its exit: a gate lifts, a barrier moves, or a troll steps aside. The world reflects what the learner has done.
+- **Use curiosity without creating an obligation.** Hidden discoveries have no signposted roads or large labels. The companion gives a gentle nearby hint. Discoveries, companion outings, and PvP encounters do not gate lessons.
+- **Let surprise respect the player’s time.** A rival can interrupt a walk with an ambush reveal, but the learner can return to the battle later. The unfinished encounter stays in the locale for the current session.
+- **Build variety through reusable environments.** A shared progression structure supports woodland, coast, desert, snow, celestial, volcanic, castle, city, town, and cave themes. A new adventure samples five distinct themes. Longer term, more environments and authored layout variants could make adventures feel different without changing lesson logic.
+- **Add life without adding clutter.** Small creatures enter from the edges, wander briefly, and leave. They are background atmosphere. Essential navigation, lesson readiness, and the real PvP encounter must remain more prominent.
+
+### What stays familiar
+
+The existing knight and companion appearances, Orin, account header, streak and rank indicators, notifications, profile, and bottom navigation remain represented. The world controls occupy a collapsible side rail so they fit around the app’s existing navigation. Orin travels in a covered wagon, giving every module a nearby meeting place without requiring a return to a central hub.
+
+### What this prototype should help us decide
+
+Can someone find and enter the next lesson without explanation? Does wandering feel pleasant rather than slow? Are discoveries findable without labels? Does the companion hint help without giving the hiding place away? Can someone defer a battle confidently? Does the world feel recognizably like Upskill Hero?
+
+In a small moderated comparison with the current adventure screen, observe time to the first lesson, navigation mistakes, requests for help, successful battle deferral and return, and reactions to discoveries. Compare perceived freedom and visual identity alongside these usability observations. Success thresholds and any longer-term retention study should be agreed by the team after a baseline; this repository contains no analytics or measured results.
+
+### Delivery strategy
+
+1. **Evaluate the concept:** use this demo to choose the navigation and visual direction.
+2. **Integrate a vertical slice:** connect one locale to existing lesson, Orin, and battle flows, with reliable return-to-world behavior and saved progress.
+3. **Validate on iPhone:** tune navigation time, touch targets, accessibility, animation intensity, and performance on the team’s supported devices.
+4. **Expand the world library:** add reusable environments and layout variants only after the core loop works well.
+
+Keep the first implementation focused on the adventure screen. Procedural world generation, new battle rules, matchmaking, an economy, and multiplayer avatars are outside this prototype’s scope.
+
+## Product and interaction specification
+
+Read [SPEC.md](SPEC.md) for the agreed direction, current state transitions, interaction rules, environment guidance, acceptance scenarios, and the proposed integration boundaries. It explicitly separates implemented behavior, presentation shortcuts, and future work.
+
 ## Run
 
 ```sh
@@ -17,7 +62,7 @@ The original app chrome is represented with Welcome / codeman6, notification bad
 
 ## Present the concept
 
-1. **Walk into range.** Use the joystick, arrow keys/WASD, or tap the map. The camera follows the knight across a world 920 × 2180 world with horizontal and vertical camera tracking. Tapping a distant landmark walks toward it; tap again when it glows to enter.
+1. **Walk into range.** Use the joystick, arrow keys/WASD, or tap the map. The camera follows the knight across a 920 × 2180 world with horizontal and vertical camera tracking. Tapping a distant landmark walks toward it; tap again when it glows to enter.
 2. **Enter a lesson.** A short, theme-aware animated sequence plays. Press **Finish lesson** to return to the map, leave a checkmark, fill a progress segment, and activate the next landmark. Completed places can be revisited.
 3. **Meet Orin.** Finishing lesson four lights the covered wagon’s lantern, opens its doorway, and reveals chimney smoke. Visit Orin once in that locale to unlock lesson five. His wagon parks beside the main road in every module, with no dedicated branch path.
 4. **Discover a rival.** Walking through the grass near the third lesson triggers an ambush. Enter the battle or choose **Return to this battle later**. The encounter stays at that location. Completing it leaves a victory marker and never blocks lesson progression.
