@@ -224,7 +224,7 @@ export default function App() {
               <View pointerEvents="none" style={[s.landmarkLabel,place.done&&s.completeLabel,glowing&&{backgroundColor:'#fff8d7',borderWidth:1,borderColor:'#e7cc87'}]}><Text style={[s.landmarkTitle,glowing&&{color:theme.ink}]}>{label}</Text>{!!hint&&<Text style={s.landmarkHint}>{hint}</Text>}</View>
             </Pressable>;
           })}
-          <WorldLife theme={theme} position={position} progress={p} paused={!!panel||!!film||surprise} enabled={lifeEnabled} preview={lifePreview}/>
+          <WorldLife theme={theme} position={position} view={{...camera,width:430,height:visibleHeight}} progress={p} paused={!!panel||!!film||surprise} enabled={lifeEnabled} preview={lifePreview}/>
           {!sentUntil&&<View pointerEvents="none" style={[s.actor,{left:follower.x,top:follower.y,transform:[{translateX:-12},{translateY:-33}]}]}><Sprite companion/>{companionCurious&&<View style={{position:'absolute',top:-19,left:1,width:21,height:21,borderRadius:11,backgroundColor:'#fff7d7',alignItems:'center',justifyContent:'center'}}><Text style={{fontSize:14,color:'#977843',fontWeight:'700'}}>?</Text></View>}</View>}
           <View pointerEvents="none" style={[s.actor,{left:position.x,top:position.y}]}><View style={s.shadow}/><Sprite/>{surprise&&<View style={s.exclamation}><Text style={{color:theme.accent,fontSize:30,fontWeight:'900'}}>!</Text></View>}</View>
         </View>

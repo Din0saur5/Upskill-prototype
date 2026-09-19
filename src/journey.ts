@@ -6,7 +6,7 @@ export type Theme = {
   path: string; water: string; ink: string; obstacle: string; clearing: string; lessons: string[];
 };
 export const THEMES: Theme[] = [
-  { id:'woods', name:'Whispering Woods', subtitle:'Follow a little curiosity', motif:'forest', ground:'#dce7c7', groundLight:'#edf0d8', accent:'#9577b5', foliage:'#638a74', foliageLight:'#a9bd91', path:'#f2e3c2', water:'#9ac6c7', ink:'#3d5748', obstacle:'Drawbridge', clearing:'The bridge lowers', lessons:['Lantern clearing','The old well','Mossy archive','Fern pavilion','The stone circle','Willow workshop','Watchtower hollow','The hidden library','The wisdom tree'] },
+  { id:'woods', name:'Whispering Woods', subtitle:'Follow a little curiosity', motif:'forest', ground:'#dce7c7', groundLight:'#edf0d8', accent:'#9577b5', foliage:'#638a74', foliageLight:'#a9bd91', path:'#f2e3c2', water:'#9ac6c7', ink:'#3d5748', obstacle:'The bridge troll', clearing:'The troll steps aside', lessons:['Lantern clearing','The old well','Mossy archive','Fern pavilion','The stone circle','Willow workshop','Watchtower hollow','The hidden library','The wisdom tree'] },
   { id:'coast', name:'Pearlwater Coast', subtitle:'Let wonder wash ashore', motif:'coast', ground:'#ece6cf', groundLight:'#f8f0dd', accent:'#599d9e', foliage:'#719b8a', foliageLight:'#9cc5a4', path:'#fff7e8', water:'#7ec5ce', ink:'#365d60', obstacle:'Tide gate', clearing:'The tide gate opens', lessons:['Shellfire camp','The pearl well','Coral archive','Sailcloth pavilion','The tide circle','Driftwood workshop','Seabird lookout','The chart room','The old lighthouse'] },
   { id:'desert', name:'Amberdune Oasis', subtitle:'Every horizon holds a story', motif:'desert', ground:'#ead2ae', groundLight:'#f7e5c6', accent:'#b77659', foliage:'#8aab89', foliageLight:'#b6c199', path:'#f9efd9', water:'#85b5ac', ink:'#765745', obstacle:'Fallen boulder', clearing:'The boulder rolls aside', lessons:['Caravan clearing','The oasis well','Sandstone archive','Silk pavilion','The sundial circle','Copper workshop','Dune watchtower','The scroll house','The sun temple'] },
   { id:'snow', name:'Frostlight Highlands', subtitle:'Small sparks in a quiet world', motif:'snow', ground:'#dde7ef', groundLight:'#f4f6fa', accent:'#7e8fc2', foliage:'#789ca4', foliageLight:'#b3c9cc', path:'#fdf9ef', water:'#a9cbde', ink:'#4c637d', obstacle:'Frozen arch', clearing:'The ice melts away', lessons:['Ember clearing','The glacial well','Frostbound archive','Woollen pavilion','The aurora circle','Hearth workshop','Snowbell lookout','The winter library','The northern beacon'] },
@@ -136,4 +136,34 @@ export function shuffleThemes(random:()=>number=Math.random): number[] {
   const result=THEMES.map((_,i)=>i);
   for(let i=result.length-1;i>0;i--){const j=Math.floor(random()*(i+1));[result[i],result[j]]=[result[j],result[i]];}
   return result.slice(0,MODULE_COUNT);
+}
+
+export type Creature='rabbit'|'fox'|'tumbleweed'|'slime'|'bat'|'crab'|'imp'|'goblin';
+export type WorldWindow=Point & {width:number;height:number};
+export type AmbientRoute={points:[Point,Point,Point];edge:'left'|'right'|'top'|'bottom'};
+export function creaturesFor(motif:Theme['motif']):Creature[] {
+  return motif==='volcanic'?['imp']:motif==='cave'?['bat','goblin']:motif==='desert'?['tumbleweed','tumbleweed','fox']:motif==='coast'?['crab']:motif==='sky'?['rabbit','slime']:['rabbit','fox'];
+}
+export function ambientRoute(view:WorldWindow,hero:Point,p:Progress,random:()=>number=Math.random):AmbientRoute|null {
+  const edges:AmbientRoute['edge'][]=['left','right','top','bottom'];
+  for(let attempt=0;attempt<64;attempt++){
+    const edge=edges[Math.floor(random()*edges.length)],vertical=edge==='left'||edge==='right';
+    const span=vertical?view.height:view.width;
+    const start=span*(.12+random()*.7),direction=start>span*.55?-1:1;
+    const bend=Math.max(30,Math.min(span-30,start+direction*(70+random()*70)));
+    const end=Math.max(20,Math.min(span-20,bend+direction*(40+random()*100)));
+    const inward=65+random()*55;
+    const at=(normal:number,tangent:number):Point=>edge==='left'?{x:view.x+normal,y:view.y+tangent}:edge==='right'?{x:view.x+view.width-normal,y:view.y+tangent}:edge==='top'?{x:view.x+tangent,y:view.y+normal}:{x:view.x+tangent,y:view.y+view.height-normal};
+    const points:[Point,Point,Point]=[at(-30,start),at(inward,bend),at(-30,end)];
+    if(!points.every(point=>walkable(point,p,18)))continue;
+    let safe=true;
+    for(let i=1;i<points.length;i++){
+      const a=points[i-1],b=points[i];
+      if(!clearSegment(a,b,p)){safe=false;break;}
+      // Keep incidental wildlife away from the hero, including between waypoints.
+      for(let j=0;j<=20;j++)if(distance({x:a.x+(b.x-a.x)*j/20,y:a.y+(b.y-a.y)*j/20},hero)<105){safe=false;break;}
+    }
+    if(safe)return {points,edge};
+  }
+  return null;
 }

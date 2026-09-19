@@ -21,7 +21,7 @@ The original app chrome is represented with Welcome / codeman6, notification bad
 2. **Enter a lesson.** A short, theme-aware animated sequence plays. Press **Finish lesson** to return to the map, leave a checkmark, fill a progress segment, and activate the next landmark. Completed places can be revisited.
 3. **Meet Orin.** Finishing lesson four lights the covered wagon’s lantern, opens its doorway, and reveals chimney smoke. Visit Orin once in that locale to unlock lesson five. His wagon parks beside the main road in every module, with no dedicated branch path.
 4. **Discover a rival.** Walking through the grass near the third lesson triggers an ambush. Enter the battle or choose **Return to this battle later**. The encounter stays at that location. Completing it leaves a victory marker and never blocks lesson progression.
-5. **Open the passage.** Finish all nine lessons and the Orin visit to reveal the cleared exit. The setting determines the obstacle: drawbridge, tide gate, boulder, ice arch, star seal, basalt barrier, castle portcullis, canal bridge, village gate, or crystal barrier. Enter the open passage to move to the next module.
+5. **Open the passage.** Finish all nine lessons and the Orin visit to reveal the cleared exit. The setting determines the obstacle: troll-guarded woodland bridge, tide gate, boulder, ice arch, star seal, basalt barrier, castle portcullis, canal bridge, village gate, or crystal barrier. Enter the open passage to move to the next module.
 6. **Explore the atlas.** Five modules each retain independent progress for the current session. The atlas deliberately allows previewing any module for the presentation. **New adventure · reset & shuffle** clears demo progress and chooses five unique themes from ten. **Try an environment in this chapter** previews any style while keeping chapter progress; if that style is already assigned elsewhere, the two themes swap.
 
 ### Presentation shortcuts
@@ -51,11 +51,13 @@ The initial adventure showcases woodland, coast, desert, snowy highlands, and a 
 
 ## Ambient world life
 
-Small, non-interactive creatures occasionally cross the visible world and fade away: rabbits and foxes in the greener locales and medieval settlements, crabs on the coast, tumbleweeds in the desert, and bats or little monsters underground and around the volcano. Only one appears at a time. Ground routes avoid the existing obstacle geometry.
+Small, non-interactive creatures occasionally cross the visible world and fade away: rabbits and foxes in the greener locales and medieval settlements, crabs on the coast, tumbleweeds in the desert, bats and goblins underground, and little imps around the volcano. Only one appears at a time. Creatures enter from varied screen edges, make short detours with occasional pauses, and retreat out of view. Routes avoid the existing obstacle geometry and keep a 105-unit buffer around the player at spawn.
 
 Use **Show stages → Preview a passing creature** to demonstrate it immediately, or toggle **World life: on / off** to compare the effect. Ambient motion pauses while panels, encounters, or entry animations are open, when the app is in the background, and when reduced motion is enabled. These are decorative encounters, separate from the player’s PvP ambush.
 
-The desert also contains bleached rib cages and horned dragon-skull obstacles. Their collision uses the same footprints as the scenery they replace.
+The woodland bridge is guarded by an idle troll that sways and scratches its head. After nine lessons and the Orin visit, it steps aside with a friendly expression; the passage uses the same module-completion rule. Use **Last lesson** and **Exit open** to compare the two states.
+
+The desert’s obstacles are predominantly sandstone rocks, with one large horned dragon skull and a single rib cage as sparse accents. Their collision uses the same footprints as the scenery they replace.
 
 ## Animation video
 
@@ -65,6 +67,7 @@ The desert also contains bleached rib cages and horned dragon-skull obstacles. T
 
 - `src/journey.ts`: theme definitions, locations, shuffle, progression, obstacle collision, tap-walk routing, and gate rules.
 - `src/World.tsx`: native SVG world scenery and landmark artwork.
+- `src/TrollBridge.tsx`: idle woodland gatekeeper and step-aside animation.
 - `src/WorldLife.tsx`: occasional ambient creatures, animation scheduling, and motion preferences.
 - `src/Discovery.tsx`: concealed scenery, proximity reveal, and compact chest interaction.
 - `src/Cinematic.tsx`: entry and gate-opening animation sequences.

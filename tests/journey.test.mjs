@@ -1,6 +1,6 @@
 import { strict as assert } from 'node:assert';
 import { test } from 'node:test';
-import { newProgress, finishLesson, finishOrin, finishBattle, exitOpen, orinReady, lessonAvailable, stageProgress, movePlayer, walkable, clearSegment, planWalk, approach, START, ORIN, CHESTS, EXIT, SCENERY, SET_PIECES, ROAD, revealDiscoveries, companionSensesDiscovery, THEMES, LESSONS, shuffleThemes } from '../src/journey.ts';
+import { newProgress, finishLesson, finishOrin, finishBattle, exitOpen, orinReady, lessonAvailable, stageProgress, movePlayer, walkable, clearSegment, planWalk, approach, START, ORIN, CHESTS, EXIT, SCENERY, SET_PIECES, ROAD, ambientRoute, creaturesFor, revealDiscoveries, companionSensesDiscovery, THEMES, LESSONS, shuffleThemes } from '../src/journey.ts';
 
 test('nine lessons remain sequential, with one Orin visit after lesson four',()=>{
   let p=newProgress();
@@ -79,4 +79,22 @@ test('tree and planted obstacle footprints stay clear of the rendered road and l
   for(const obstacle of [...SCENERY.filter(p=>p.kind!=='rock'),...SET_PIECES]){
     assert.ok(Math.min(...samples.map(q=>distance(obstacle,q)))>obstacle.r+36,JSON.stringify(obstacle));
   }
+});
+
+test('ambient routes enter at varied edges and leave without crossing the hero or scenery',()=>{
+  let seed=17;const random=()=>((seed=(seed*1664525+1013904223)>>>0)/4294967296);
+  const p=newProgress(),hero={x:460,y:840},view={x:245,y:480,width:430,height:600},edges=new Set();
+  const inside=point=>point.x>=view.x&&point.x<=view.x+view.width&&point.y>=view.y&&point.y<=view.y+view.height;
+  for(let i=0;i<60;i++){
+    const route=ambientRoute(view,hero,p,random);assert.ok(route);edges.add(route.edge);
+    const [from,mid,to]=route.points;
+    assert.equal(inside(from),false);assert.equal(inside(to),false);assert.ok(inside(mid));
+    for(const [a,b] of [[from,mid],[mid,to]]){
+      assert.ok(clearSegment(a,b,p));
+      for(let j=0;j<=20;j++)assert.ok(Math.hypot(a.x+(b.x-a.x)*j/20-hero.x,a.y+(b.y-a.y)*j/20-hero.y)>=105);
+    }
+  }
+  assert.ok(edges.size>=3);
+  assert.deepEqual(creaturesFor('volcanic'),['imp']);
+  assert.deepEqual(creaturesFor('cave'),['bat','goblin']);
 });

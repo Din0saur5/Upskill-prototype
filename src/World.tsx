@@ -1,4 +1,5 @@
 import React, { memo, useId } from 'react';
+import { TrollBridge } from './TrollBridge';
 import Svg, { Circle, Defs, Ellipse, G, LinearGradient, Path, Pattern, Rect, Stop } from 'react-native-svg';
 import { WORLD, LESSONS, ROAD, SCENERY, SET_PIECES, AMBUSH, distance, type Theme } from './journey';
 
@@ -86,14 +87,14 @@ export const World = memo(function World({theme:t}:{theme:Theme}) {
     <Path d="M-10 155Q160 107 320 149T601 151T930 120L930 212Q678 246 533 209T312 212T-10 207Z" fill={t.motif==='volcanic'?'#f27632':t.motif==='desert'?'#9c8583':t.water}/>
     <Path d="M8 167Q122 140 288 167M580 183Q701 201 878 167" stroke={t.dark?t.accent:'#ffffff66'} strokeWidth="3" fill="none"/>
     {urban?Array.from({length:t.motif==='city'?24:16},(_,i)=><Building key={i} x={i%2?810:110} y={350+Math.floor(i/2)*(t.motif==='city'?155:235)} city={t.motif==='city'} t={t} seed={i}/>):Array.from({length:70},(_,i)=><Plant key={i} x={i%2?830+(i*17)%65:20+(i*13)%70} y={88+i*31} seed={i} t={t}/>)}
-    {SET_PIECES.map((p,i)=>urban?<Building key={i} x={p.x} y={p.y} city={t.motif==='city'} t={t} seed={i}/>:t.motif==='desert'&&i%3===0?<G key={i} transform={`translate(${p.x},${p.y})`}><DragonSkull scale={1.15}/></G>:<G key={i}><Plant x={p.x-19} y={p.y-12} seed={i} t={t}/><Plant x={p.x+18} y={p.y+10} seed={i+1} t={t}/></G>)}
+    {SET_PIECES.map((p,i)=>urban?<Building key={i} x={p.x} y={p.y} city={t.motif==='city'} t={t} seed={i}/>:t.motif==='desert'&&i===0?<G key={i} transform={`translate(${p.x},${p.y})`}><DragonSkull scale={1.15}/></G>:<G key={i}><Plant x={p.x-19} y={p.y-12} seed={i} t={t}/><Plant x={p.x+18} y={p.y+10} seed={i+1} t={t}/></G>)}
     {SCENERY.map((p,i)=><G key={i} transform={`translate(${p.x},${p.y})`}>
       <Ellipse cy="6" rx={p.r+7} ry={p.r*.7} fill={t.dark?'#101217':t.ink} opacity=".2"/>
-      {t.motif==='desert'&&p.kind==='rock'?<G>{i%4===0?<DragonSkull scale={p.r/38}/>:<Bones/>}</G>:t.motif==='city'&&p.kind==='rock'?<><Ellipse rx={p.r} ry={p.r*.7} fill="#a8a298"/><Ellipse cy="-4" rx={p.r-5} ry={p.r*.54} fill={t.water}/><Path d="M-5-5L-3-37H4L7-5Z" fill="#d3c9b7"/><Ellipse cy="-37" rx="13" ry="6" fill="#e4daca"/><Path d="M-11-35Q-20-23-22-8M11-35Q20-23 22-8" stroke="#c0e3df" strokeWidth="2" fill="none"/></>:
+      {t.motif==='desert'&&p.kind==='rock'&&i===2?<Bones/>:t.motif==='city'&&p.kind==='rock'?<><Ellipse rx={p.r} ry={p.r*.7} fill="#a8a298"/><Ellipse cy="-4" rx={p.r-5} ry={p.r*.54} fill={t.water}/><Path d="M-5-5L-3-37H4L7-5Z" fill="#d3c9b7"/><Ellipse cy="-37" rx="13" ry="6" fill="#e4daca"/><Path d="M-11-35Q-20-23-22-8M11-35Q20-23 22-8" stroke="#c0e3df" strokeWidth="2" fill="none"/></>:
       urban&&p.kind==='tree'?<><Rect x="-26" y="-10" width="52" height="15" rx="3" fill="#a48c73"/><Path d="M-21 4V13M21 4V13M-22-12V-31H22V-12" stroke="#7e7e70" strokeWidth="4" fill="none"/><Path d="M0-11V-72" stroke="#747773" strokeWidth="3"/><Rect x="-7" y="-82" width="14" height="19" rx="3" fill="#e9d29d" stroke="#747773" strokeWidth="3"/></>:
       p.kind==='tree'&&!urban?<Plant x={0} y={0} seed={i} t={t}/>:
       p.kind==='planter'&&!t.dark?<><Ellipse rx={p.r} ry={p.r*.67} fill={urban?'#a18a72':t.foliage}/><Ellipse cy="-7" rx={p.r-5} ry={p.r*.55} fill={t.foliageLight}/>{[-15,0,15].map(x=><Circle key={x} cx={x} cy={-9+(x%3)} r="4" fill={t.accent}/>)}</>:
-      <><Path d={`M${-p.r} 5L${-p.r*.8} ${-p.r*.55}L${-p.r*.15} ${-p.r}L${p.r*.7} ${-p.r*.65}L${p.r} 3L${p.r*.55} ${p.r*.6}L${-p.r*.6} ${p.r*.6}Z`} fill={t.dark?t.foliage:urban?'#a79a89':'#a4aba0'}/><Path d={`M${-p.r*.8} ${-p.r*.55}L0 -7L${-p.r*.15} ${-p.r}M0 -7L${p.r} 3M0 -7L${p.r*.55} ${p.r*.6}`} stroke={t.dark?t.foliageLight:'#c7c8b7'} strokeWidth="3" fill="none"/>{t.dark&&<Path d="M-6-20L3-9L-2 1L7 11" stroke={t.accent} strokeWidth="2" fill="none"/>}</>}
+      <><Path d={`M${-p.r} 5L${-p.r*.8} ${-p.r*.55}L${-p.r*.15} ${-p.r}L${p.r*.7} ${-p.r*.65}L${p.r} 3L${p.r*.55} ${p.r*.6}L${-p.r*.6} ${p.r*.6}Z`} fill={t.dark?t.foliage:t.motif==='desert'?'#bc9d79':urban?'#a79a89':'#a4aba0'}/><Path d={`M${-p.r*.8} ${-p.r*.55}L0 -7L${-p.r*.15} ${-p.r}M0 -7L${p.r} 3M0 -7L${p.r*.55} ${p.r*.6}`} stroke={t.dark?t.foliageLight:t.motif==='desert'?'#ddc3a0':'#c7c8b7'} strokeWidth="3" fill="none"/>{t.dark&&<Path d="M-6-20L3-9L-2 1L7 11" stroke={t.accent} strokeWidth="2" fill="none"/>}</>}
     </G>)}
     {Array.from({length:170},(_,i)=>{const x=100+(i*137)%730,y=285+(i*83)%1830;return urban?<Circle key={i} cx={x} cy={y} r="1" fill={t.foliage} opacity=".15"/>:t.dark?<G key={i} opacity=".45"><Circle cx={x} cy={y} r={i%4===0?1.8:.8} fill={i%5===0?t.accent:t.foliageLight}/>{i%9===0&&<Path d={`M${x} ${y}l8-3 7 6`} stroke={t.foliageLight} fill="none"/>}</G>:<G key={i} opacity=".4"><Path d={`M${x} ${y}l-3-6m3 6l4-5`} stroke={t.foliage} strokeWidth="1.5" strokeLinecap="round"/>{i%3===0&&<Circle cx={x+4} cy={y-8} r="2" fill={i%6===0?t.accent:'#fffdf0'}/>}</G>})}
     <G opacity=".65">{[0,1,2,3,4].map(i=><Path key={i} d={`M${AMBUSH.x-40+i*22} ${AMBUSH.y+12+i%2*9}l-4-24m4 24l12-27m-12 27l-13-19`} stroke={t.foliageLight} strokeWidth="3" fill="none" strokeLinecap="round"/>)}</G>
@@ -101,6 +102,7 @@ export const World = memo(function World({theme:t}:{theme:Theme}) {
 });
 
 export function LandmarkArt({kind,index=0,theme:t,ready=false,done=false}:{kind:'lesson'|'wagon'|'chest'|'gate'|'battle';index?:number;theme:Theme;ready?:boolean;done?:boolean}) {
+  if(kind==='gate'&&t.motif==='forest')return <TrollBridge ready={ready}/>;
   const color=done?'#8ba688':t.accent;
   return <Svg width="100%" height="100%" viewBox="0 0 120 120">
     <Ellipse cx="60" cy="99" rx="43" ry="12" fill={t.ink} opacity=".13"/>

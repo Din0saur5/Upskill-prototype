@@ -1,5 +1,6 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { AccessibilityInfo, Animated, Easing, Platform, Pressable, StyleSheet, Text, View } from 'react-native';
+import { TrollBridge } from './TrollBridge';
 import { LandmarkArt } from './World';
 import type { Theme } from './journey';
 export type Film = { title:string; subtitle:string; kind:'lesson'|'battle'|'wagon'|'gate'|'chest'; index?:number; complete?:boolean; onEnd:()=>void };
@@ -9,6 +10,8 @@ export type Film = { title:string; subtitle:string; kind:'lesson'|'battle'|'wago
 export function Cinematic({film,theme}:{film:Film;theme:Theme}) {
   const progress=useRef(new Animated.Value(0)).current;
   const ended=useRef(false);
+  const [trollCleared,setTrollCleared]=useState(false);
+  useEffect(()=>{const timer=setTimeout(()=>setTrollCleared(true),550);return()=>clearTimeout(timer)},[]);
   const latest=useRef(film.onEnd);latest.current=film.onEnd;
   const end=()=>{if(!ended.current){ended.current=true;latest.current()}};
   useEffect(()=>{
@@ -22,7 +25,7 @@ export function Cinematic({film,theme}:{film:Film;theme:Theme}) {
   return <Animated.View accessibilityViewIsModal style={[styles.cover,{backgroundColor:theme.groundLight,opacity:progress.interpolate({inputRange:[0,.12,.86,1],outputRange:[0,1,1,0]})}]}>
     <View style={[styles.aura,{backgroundColor:theme.accent+'22'}]}/>
     {Array.from({length:12},(_,i)=><Animated.Text key={i} style={[styles.spark,{left:`${12+(i*19)%80}%`,top:`${15+(i*23)%65}%`,color:theme.accent,opacity:progress.interpolate({inputRange:[0,.3,.75,1],outputRange:[0,.8,.7,0]}),transform:[{translateY:progress.interpolate({inputRange:[0,1],outputRange:[30,-60]})}]}]}>✦</Animated.Text>)}
-    <Animated.View style={{width:170,height:170,transform:[{scale:progress.interpolate({inputRange:[0,.2,.8,1],outputRange:[.5,.92,1.3,1.65]})},{translateY:progress.interpolate({inputRange:[0,1],outputRange:[22,-12]})}]}}>{film.kind==='gate'&&film.subtitle==='Chapter complete'?<>
+    <Animated.View style={{width:170,height:170,transform:[{scale:progress.interpolate({inputRange:[0,.2,.8,1],outputRange:[.5,.92,1.3,1.65]})},{translateY:progress.interpolate({inputRange:[0,1],outputRange:[22,-12]})}]}}>{film.kind==='gate'&&film.subtitle==='Chapter complete'&&theme.motif==='forest'?<TrollBridge ready={trollCleared}/>:film.kind==='gate'&&film.subtitle==='Chapter complete'?<>
       <Animated.View style={{position:'absolute',inset:0,opacity:progress.interpolate({inputRange:[0,.25,.65,1],outputRange:[1,1,0,0]}),transform:[{translateX:progress.interpolate({inputRange:[0,.25,.8,1],outputRange:[0,0,theme.motif==='desert'||theme.motif==='volcanic'?85:0,85]})},{scaleY:progress.interpolate({inputRange:[0,.25,.75,1],outputRange:[1,1,.15,.15]})}]}}><LandmarkArt kind="gate" theme={theme}/></Animated.View>
       <Animated.View style={{position:'absolute',inset:0,opacity:progress.interpolate({inputRange:[0,.35,.7,1],outputRange:[0,0,1,1]})}}><LandmarkArt kind="gate" theme={theme} ready/></Animated.View>
     </>:<LandmarkArt kind={film.kind} index={film.index} theme={theme} ready done={film.complete}/>}</Animated.View>
